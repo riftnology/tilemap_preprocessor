@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intro - KonvaJS Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        .source-url {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="source-url">
+        <strong>Source:</strong> <a href="https://konvajs.org/docs/index.html" target="_blank">https://konvajs.org/docs/index.html</a>
+    </div>
+    <article><div class="theme-doc-markdown markdown"><h2 class="anchor anchorWithStickyNavbar_LWe7" id="whats-konva">What's Konva?<a aria-label="Direct link to What's Konva?" class="hash-link" href="https://konvajs.org/docs/index.html#whats-konva" title="Direct link to What's Konva?">​</a></h2>
+<p><code>Konva</code> is an HTML5 Canvas JavaScript framework that extends the 2d context
+by enabling canvas interactivity for desktop and mobile applications.</p>
+<p><code>Konva</code> enables high performance animations, transitions, node nesting, layering, filtering,
+caching, event handling for desktop and mobile applications, and much more.</p>
+<p>You can draw things onto the stage, add event listeners to them, move them,
+scale them, and rotate them independently from other shapes to support high performance
+animations, even if your application uses thousands of shapes.</p>
+<p>This project began as a GitHub fork of <a href="https://github.com/ericdrowell/KineticJS" rel="noopener noreferrer" target="_blank">KineticJS</a>.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="install-konva">Install Konva<a aria-label="Direct link to Install Konva" class="hash-link" href="https://konvajs.org/docs/index.html#install-konva" title="Direct link to Install Konva">​</a></h2>
+<p>If you are using package managers:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa" tabindex="0"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">npm install konva</span><br/></span></code></pre><div class="buttonGroup__atx"><button aria-label="Copy code to clipboard" class="clean-btn" title="Copy" type="button"><span aria-hidden="true" class="copyButtonIcons_eSgA"><svg class="copyButtonIcon_y97N" viewbox="0 0 24 24"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" fill="currentColor"></path></svg><svg class="copyButtonSuccessIcon_LjdS" viewbox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" fill="currentColor"></path></svg></span></button></div></div></div>
+<p>Or just use script tag:</p>
+<div class="language-html codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre class="prism-code language-html codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa" tabindex="0"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token tag punctuation" style="color:#393A34">&lt;</span><span class="token tag" style="color:#00009f">script</span><span class="token tag" style="color:#00009f"> </span><span class="token tag attr-name" style="color:#00a4db">src</span><span class="token tag attr-value punctuation attr-equals" style="color:#393A34">=</span><span class="token tag attr-value punctuation" style="color:#393A34">"</span><span class="token tag attr-value" style="color:#e3116c">https://unpkg.com/konva@9/konva.min.js</span><span class="token tag attr-value punctuation" style="color:#393A34">"</span><span class="token tag punctuation" style="color:#393A34">&gt;</span><span class="token script"></span><span class="token tag punctuation" style="color:#393A34">&lt;/</span><span class="token tag" style="color:#00009f">script</span><span class="token tag punctuation" style="color:#393A34">&gt;</span><br/></span></code></pre><div class="buttonGroup__atx"><button aria-label="Copy code to clipboard" class="clean-btn" title="Copy" type="button"><span aria-hidden="true" class="copyButtonIcons_eSgA"><svg class="copyButtonIcon_y97N" viewbox="0 0 24 24"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" fill="currentColor"></path></svg><svg class="copyButtonSuccessIcon_LjdS" viewbox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" fill="currentColor"></path></svg></span></button></div></div></div>
+<p>Or download from CDN:</p>
+<ul>
+<li><a href="https://unpkg.com/konva@9/konva.js" rel="noopener noreferrer" target="_blank">Full version konva.js</a></li>
+<li><a href="https://unpkg.com/konva@9/konva.min.js" rel="noopener noreferrer" target="_blank">Min version konva.min.js</a></li>
+</ul></div></article>
+</body>
+</html>

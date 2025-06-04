@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI tools - KonvaJS Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        .source-url {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="source-url">
+        <strong>Source:</strong> <a href="https://konvajs.org/docs/ai_tools.html" target="_blank">https://konvajs.org/docs/ai_tools.html</a>
+    </div>
+    <article><div class="theme-doc-markdown markdown"><h2 class="anchor anchorWithStickyNavbar_LWe7" id="coding-with-konva-and-ai-agent">Coding with Konva and AI agent<a aria-label="Direct link to Coding with Konva and AI agent" class="hash-link" href="https://konvajs.org/docs/ai_tools.html#coding-with-konva-and-ai-agent" title="Direct link to Coding with Konva and AI agent">​</a></h2>
+<p>We have several AI tools that may help you build better konva apps. All of them are powered by awesome <a href="https://crawlchat.app/" rel="noopener noreferrer" target="_blank">crawlchat</a>.</p>
+<p>AI agent will use Konva docs exensevly to answer your questions. Please remember it is an LLM and as any modern LLM it may give wrong answers.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="ai-chat-bot">AI chat bot<a aria-label="Direct link to AI chat bot" class="hash-link" href="https://konvajs.org/docs/ai_tools.html#ai-chat-bot" title="Direct link to AI chat bot">​</a></h2>
+<p>Click "Ask AI" button somewhere on the page to ask a question to AI.</p>
+<p>You can also join your <a href="https://remotion.dev/discord" rel="noopener noreferrer" target="_blank">Discord community</a> and ask <code>@AiBot-CrawlChat</code> there.</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="mcp">MCP<a aria-label="Direct link to MCP" class="hash-link" href="https://konvajs.org/docs/ai_tools.html#mcp" title="Direct link to MCP">​</a></h2>
+<p>MCP (Model Context Protocol) is a standard protocol to connect with LLM applications like Claude App, Cursor, Windsurf or more such applications.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="cursor-mcp-command">Cursor MCP Command<a aria-label="Direct link to Cursor MCP Command" class="hash-link" href="https://konvajs.org/docs/ai_tools.html#cursor-mcp-command" title="Direct link to Cursor MCP Command">​</a></h3>
+<p>For clear video instructions <a href="https://guides.crawlchat.app/walkthrough/67db0080600010f091e529b7" rel="noopener noreferrer" target="_blank">take a look into this guide</a>.
+Cursor needs a JSON snippet to be added to the Cursor settings. Copy and paste the following snippet.</p>
+<p><strong>Important: as of March 2025, cursor will use MCP only in "Agent" mode. "Ask" and others will not use it.</strong></p>
+<div class="language-json codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre class="prism-code language-json codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa" tabindex="0"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token property" style="color:#36acaa">"konva-documentation"</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br/></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token property" style="color:#36acaa">"command"</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">"npx"</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br/></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token property" style="color:#36acaa">"args"</span><span class="token operator" style="color:#393A34">:</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">[</span><span class="token plain"></span><br/></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token string" style="color:#e3116c">"crawl-chat-mcp"</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br/></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token string" style="color:#e3116c">"--id=67d221efb4b9de65095a2579"</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"></span><br/></span><span class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token string" style="color:#e3116c">"--name=konva_documentation"</span><span class="token plain"></span><br/></span><span class="token-line" style="color:#393A34"><span class="token plain">  </span><span class="token punctuation" style="color:#393A34">]</span><span class="token plain"></span><br/></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><br/></span></code></pre><div class="buttonGroup__atx"><button aria-label="Copy code to clipboard" class="clean-btn" title="Copy" type="button"><span aria-hidden="true" class="copyButtonIcons_eSgA"><svg class="copyButtonIcon_y97N" viewbox="0 0 24 24"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" fill="currentColor"></path></svg><svg class="copyButtonSuccessIcon_LjdS" viewbox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" fill="currentColor"></path></svg></span></button></div></div></div>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="mcp-command">MCP Command<a aria-label="Direct link to MCP Command" class="hash-link" href="https://konvajs.org/docs/ai_tools.html#mcp-command" title="Direct link to MCP Command">​</a></h3>
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa" tabindex="0"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">npx crawl-chat-mcp --id=67d221efb4b9de65095a2579 --name=konva_documentation</span><br/></span></code></pre><div class="buttonGroup__atx"><button aria-label="Copy code to clipboard" class="clean-btn" title="Copy" type="button"><span aria-hidden="true" class="copyButtonIcons_eSgA"><svg class="copyButtonIcon_y97N" viewbox="0 0 24 24"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" fill="currentColor"></path></svg><svg class="copyButtonSuccessIcon_LjdS" viewbox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" fill="currentColor"></path></svg></span></button></div></div></div></div></article>
+</body>
+</html>

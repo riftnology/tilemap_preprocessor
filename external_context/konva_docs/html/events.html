@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - KonvaJS Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        .source-url {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="source-url">
+        <strong>Source:</strong> <a href="https://konvajs.org/docs/events/Binding_Events.html" target="_blank">https://konvajs.org/docs/events/Binding_Events.html</a>
+    </div>
+    <article><div class="theme-doc-markdown markdown"><p>To detect shape events with Konva, we can use the <code>on()</code> method to bind event handlers to a node.</p>
+<p>The <code>on()</code> method requires an event type and a function to be executed when the event occurs.</p>
+<p>Mouse events: <code>mouseover</code>, <code>mouseout</code>, <code>mouseenter</code>, <code>mouseleave</code>, <code>mousemove</code>, <code>mousedown</code>, <code>mouseup</code>, <code>wheel</code>, <code>click</code>, <code>dblclick</code>.</p>
+<p>Touch events: <code>touchstart</code>, <code>touchmove</code>, <code>touchend</code>, <code>tap</code>, <code>dbltap</code>.</p>
+<p>Pointer events: <code>pointerdown</code>, <code>pointermove</code>, <code>pointereup</code>, <code>pointercancel</code>, <code>pointerover</code>, <code>pointerenter</code>, <code>pointerout</code>,<code>pointerleave</code>, <code>pointerclick</code>, <code>pointerdblclick</code>.</p>
+<p>Drag events: <code>dragstart</code>, <code>dragmove</code>, and <code>dragend</code>.</p>
+<p>Transform events: <code>transformstart</code>, <code>transform</code>, <code>transformend</code>.</p>
+<p><strong>Instructions: Mouseover and mouseout of the triangle, and mouseover, mouseout, mousedown, and mouseup over the circle.</strong></p>
+<!-- -->
+<div class="tabs-container tabList__CuJ"><ul aria-orientation="horizontal" class="tabs" role="tablist"><li aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active" role="tab" tabindex="0">Vanilla</li><li aria-selected="false" class="tabs__item tabItem_LNqP" role="tab" tabindex="-1">React</li><li aria-selected="false" class="tabs__item tabItem_LNqP" role="tab" tabindex="-1">Vue</li></ul><div class="margin-top--md"><div class="tabItem_Ymn6" role="tabpanel"><div class="light sp-c-fVPbOs sp-c-fVPbOs-gMQIch-variant-light sp-wrapper"><div class="sp-c-ikJbEZ sp-layout"><div class="sp-c-euXojQ sp-editor sp-stack" style="height:400px;flex-grow:50;flex-shrink:50;flex-basis:0;overflow:hidden"><div class="sp-c-dyHYiL sp-tabs" translate="no"><div aria-label="Select active file" class="sp-c-gGbYbQ sp-tabs-scrollable-container" role="tablist"><div aria-controls="/index.html-:Rr9a7d6laqh:-tab-panel" aria-selected="false" class="sp-c-hluGOI sp-tab-container" role="tab"><button class="sp-c-bxeRRt sp-c-pacmO sp-tab-button" data-active="false" id="/index.html-:Rr9a7d6laqh:-tab" tabindex="-1" title="/index.html" type="button">index.html</button></div><div aria-controls="/index.js-:Rr9a7d6laqh:-tab-panel" aria-selected="true" class="sp-c-hluGOI sp-tab-container" role="tab"><button class="sp-c-bxeRRt sp-c-pacmO sp-tab-button" data-active="true" id="/index.js-:Rr9a7d6laqh:-tab" tabindex="0" title="/index.js" type="button">index.js</button></div></div></div><div aria-labelledby="/index.js-:Rr9a7d6laqh:-tab" class="sp-c-gtcpyq sp-code-editor" id="/index.js-:Rr9a7d6laqh:-tab-panel" role="tabpanel"><div aria-autocomplete="list" aria-label="Code Editor for index.js" aria-multiline="true" class="sp-pristine sp-javascript sp-c-jOWzsE sp-c-jkvvao sp-cm" role="textbox" tabindex="0" translate="no"><pre class="sp-c-fWymNx sp-pre-placeholder" style="margin-left:var(--sp-space-5)"><span class="sp-syntax-keyword">import</span> <span class="sp-syntax-plain">Konva</span> <span class="sp-syntax-keyword">from</span> <span class="sp-syntax-string">'konva'</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">stage</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Stage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">container</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'container'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">width</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerWidth</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">height</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerHeight</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">layer</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Layer</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">text</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Text</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">10</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">10</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">fontFamily</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'Calibri'</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">fontSize</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">24</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">text</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">''</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'black'</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">triangle</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">RegularPolygon</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">80</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">120</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">sides</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">3</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">radius</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">80</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'#00D2FF'</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">stroke</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'black'</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">strokeWidth</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">4</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">circle</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Circle</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">230</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">100</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">radius</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">60</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'red'</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">stroke</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'black'</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-property">strokeWidth</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">4</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">function</span> <span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">message</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-plain">text</span>.<span class="sp-syntax-property">text</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">message</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span>
+
+<span class="sp-syntax-plain">triangle</span>.<span class="sp-syntax-property">on</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'mouseout'</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mouseout triangle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-plain">triangle</span>.<span class="sp-syntax-property">on</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'mousemove'</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">mousePos</span> = <span class="sp-syntax-plain">stage</span>.<span class="sp-syntax-property">getPointerPosition</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'x: '</span> + <span class="sp-syntax-plain">mousePos</span>.<span class="sp-syntax-property">x</span> + <span class="sp-syntax-string">', y: '</span> + <span class="sp-syntax-plain">mousePos</span>.<span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-plain">circle</span>.<span class="sp-syntax-property">on</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'mouseover'</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mouseover circle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">circle</span>.<span class="sp-syntax-property">on</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'mouseout'</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mouseout circle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">circle</span>.<span class="sp-syntax-property">on</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'mousedown'</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mousedown circle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">circle</span>.<span class="sp-syntax-property">on</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'mouseup'</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+<span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mouseup circle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-plain">layer</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">triangle</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">layer</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">circle</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">layer</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">text</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">stage</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">layer</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+</pre></div></div></div><div class="sp-c-gvjhpQ sp-c-gvjhpQ-xpXQZ-direction-horizontal sp-resize-handler" data-direction="horizontal" style="left:calc(50% - 5px)"></div><div class="sp-c-euXojQ sp-preview sp-stack" style="flex-grow:50;flex-shrink:50;flex-basis:0;width:50%;gap:0;height:400px"><div class="sp-c-juMdfR sp-preview-container"><iframe class="sp-c-fgviib sp-preview-iframe" title="Sandpack Preview"></iframe><div class="sp-c-kwibBT sp-preview-actions"><a class="sp-icon-standalone sp-c-bxeRRt sp-c-gMfcns sp-c-dEbKhQ sp-button" href="https://codesandbox.io/api/v1/sandboxes/define?undefined&amp;environment=parcel" rel="noreferrer noopener" target="_blank" title="Open in CodeSandbox"><svg fill="none" height="16" stroke="currentColor" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><title>Open on CodeSandbox</title><path d="M6.66665 3.33337H4.33331C3.78103 3.33337 3.33331 3.78109 3.33331 4.33337V11.6667C3.33331 12.219 3.78103 12.6667 4.33331 12.6667H11.6666C12.2189 12.6667 12.6666 12.219 12.6666 11.6667V9.33337" stroke-linecap="round"></path><path d="M10 3.33337H12.5667C12.6219 3.33337 12.6667 3.37815 12.6667 3.43337V6.00004" stroke-linecap="round"></path><path d="M7.33331 8.66668L12.5333 3.46667" stroke-linecap="round"></path></svg><span>Open Sandbox</span></a></div></div></div></div></div></div><div class="tabItem_Ymn6" hidden="" role="tabpanel"><div class="light sp-c-fVPbOs sp-c-fVPbOs-gMQIch-variant-light sp-wrapper"><div class="sp-c-ikJbEZ sp-layout"><div class="sp-c-euXojQ sp-editor sp-stack" style="height:400px;flex-grow:50;flex-shrink:50;flex-basis:0;overflow:hidden"><div aria-labelledby="/App.js-:Rt9a7d6laqh:-tab" class="sp-c-gtcpyq sp-code-editor" id="/App.js-:Rt9a7d6laqh:-tab-panel" role="tabpanel"><div aria-autocomplete="list" aria-label="Code Editor for App.js" aria-multiline="true" class="sp-pristine sp-javascript sp-c-jOWzsE sp-c-jkvvao sp-cm" role="textbox" tabindex="0" translate="no"><pre class="sp-c-fWymNx sp-pre-placeholder" style="margin-left:var(--sp-space-5)"><span class="sp-syntax-keyword">import</span> <span class="sp-syntax-punctuation">{</span> <span class="sp-syntax-plain">Stage</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">Layer</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">RegularPolygon</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">Circle</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">Text</span> <span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-keyword">from</span> <span class="sp-syntax-string">'react-konva'</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-keyword">import</span> <span class="sp-syntax-punctuation">{</span> <span class="sp-syntax-plain">useRef</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">useState</span> <span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-keyword">from</span> <span class="sp-syntax-string">'react'</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">App</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-punctuation">[</span><span class="sp-syntax-plain">message</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">setMessage</span><span class="sp-syntax-punctuation">]</span> = <span class="sp-syntax-definition">useState</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">''</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+  <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">stageRef</span> = <span class="sp-syntax-definition">useRef</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+  <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">writeMessage</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">text</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+    <span class="sp-syntax-definition">setMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">text</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+  <span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+  <span class="sp-syntax-keyword">return</span> <span class="sp-syntax-punctuation">(</span>
+    <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Stage</span> <span class="sp-syntax-property">width</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerWidth</span><span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-property">height</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerHeight</span><span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-property">ref</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">stageRef</span><span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Layer</span><span class="sp-syntax-punctuation">&gt;</span>
+        <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Text</span>
+          <span class="sp-syntax-property">x</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">10</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">y</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">10</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">fontFamily</span>=<span class="sp-syntax-string">"Calibri"</span>
+          <span class="sp-syntax-property">fontSize</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">24</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">text</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">message</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">fill</span>=<span class="sp-syntax-string">"black"</span>
+        <span class="sp-syntax-punctuation">/&gt;</span>
+        <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">RegularPolygon</span>
+          <span class="sp-syntax-property">x</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">80</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">y</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">120</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">sides</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">3</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">radius</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">80</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">fill</span>=<span class="sp-syntax-string">"#00D2FF"</span>
+          <span class="sp-syntax-property">stroke</span>=<span class="sp-syntax-string">"black"</span>
+          <span class="sp-syntax-property">strokeWidth</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">4</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">onMouseout</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mouseout triangle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">onMousemove</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+            <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">mousePos</span> = <span class="sp-syntax-plain">stageRef</span>.<span class="sp-syntax-property">current</span>.<span class="sp-syntax-property">getPointerPosition</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+            <span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'x: '</span> + <span class="sp-syntax-plain">mousePos</span>.<span class="sp-syntax-property">x</span> + <span class="sp-syntax-string">', y: '</span> + <span class="sp-syntax-plain">mousePos</span>.<span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+          <span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">}</span>
+        <span class="sp-syntax-punctuation">/&gt;</span>
+        <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Circle</span>
+          <span class="sp-syntax-property">x</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">230</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">y</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">100</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">radius</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">60</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">fill</span>=<span class="sp-syntax-string">"red"</span>
+          <span class="sp-syntax-property">stroke</span>=<span class="sp-syntax-string">"black"</span>
+          <span class="sp-syntax-property">strokeWidth</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">4</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">onMouseover</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mouseover circle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">onMouseout</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mouseout circle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">onMousedown</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mousedown circle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">onMouseup</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'Mouseup circle'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">}</span>
+        <span class="sp-syntax-punctuation">/&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">Layer</span><span class="sp-syntax-punctuation">&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">Stage</span><span class="sp-syntax-punctuation">&gt;</span>
+  <span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">export</span> <span class="sp-syntax-keyword">default</span> <span class="sp-syntax-plain">App</span><span class="sp-syntax-punctuation">;</span>
+
+</pre></div></div></div><div class="sp-c-gvjhpQ sp-c-gvjhpQ-xpXQZ-direction-horizontal sp-resize-handler" data-direction="horizontal" style="left:calc(50% - 5px)"></div><div class="sp-c-euXojQ sp-preview sp-stack" style="flex-grow:50;flex-shrink:50;flex-basis:0;width:50%;gap:0;height:400px"><div class="sp-c-juMdfR sp-preview-container"><iframe class="sp-c-fgviib sp-preview-iframe" title="Sandpack Preview"></iframe><div class="sp-c-kwibBT sp-preview-actions"><a class="sp-icon-standalone sp-c-bxeRRt sp-c-gMfcns sp-c-dEbKhQ sp-button" href="https://codesandbox.io/api/v1/sandboxes/define?undefined&amp;environment=create-react-app" rel="noreferrer noopener" target="_blank" title="Open in CodeSandbox"><svg fill="none" height="16" stroke="currentColor" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><title>Open on CodeSandbox</title><path d="M6.66665 3.33337H4.33331C3.78103 3.33337 3.33331 3.78109 3.33331 4.33337V11.6667C3.33331 12.219 3.78103 12.6667 4.33331 12.6667H11.6666C12.2189 12.6667 12.6666 12.219 12.6666 11.6667V9.33337" stroke-linecap="round"></path><path d="M10 3.33337H12.5667C12.6219 3.33337 12.6667 3.37815 12.6667 3.43337V6.00004" stroke-linecap="round"></path><path d="M7.33331 8.66668L12.5333 3.46667" stroke-linecap="round"></path></svg><span>Open Sandbox</span></a></div></div></div></div></div></div><div class="tabItem_Ymn6" hidden="" role="tabpanel"><div class="light sp-c-fVPbOs sp-c-fVPbOs-gMQIch-variant-light sp-wrapper"><div class="sp-c-ikJbEZ sp-layout"><div class="sp-c-euXojQ sp-editor sp-stack" style="height:400px;flex-grow:50;flex-shrink:50;flex-basis:0;overflow:hidden"><div class="sp-c-dyHYiL sp-tabs" translate="no"><div aria-label="Select active file" class="sp-c-gGbYbQ sp-tabs-scrollable-container" role="tablist"><div aria-controls="/src/App.vue-:Rv9a7d6laqh:-tab-panel" aria-selected="true" class="sp-c-hluGOI sp-tab-container" role="tab"><button class="sp-c-bxeRRt sp-c-pacmO sp-tab-button" data-active="true" id="/src/App.vue-:Rv9a7d6laqh:-tab" tabindex="0" title="/src/App.vue" type="button">App.vue</button></div><div aria-controls="/src/main.js-:Rv9a7d6laqh:-tab-panel" aria-selected="false" class="sp-c-hluGOI sp-tab-container" role="tab"><button class="sp-c-bxeRRt sp-c-pacmO sp-tab-button" data-active="false" id="/src/main.js-:Rv9a7d6laqh:-tab" tabindex="-1" title="/src/main.js" type="button">main.js</button></div></div></div><div aria-labelledby="/src/App.vue-:Rv9a7d6laqh:-tab" class="sp-c-gtcpyq sp-code-editor" id="/src/App.vue-:Rv9a7d6laqh:-tab-panel" role="tabpanel"><div aria-autocomplete="list" aria-label="Code Editor for App.vue" aria-multiline="true" class="sp-pristine sp-html sp-c-jOWzsE sp-c-jkvvao sp-cm" role="textbox" tabindex="0" translate="no"><pre class="sp-c-fWymNx sp-pre-placeholder" style="margin-left:var(--sp-space-5)"><span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">template</span><span class="sp-syntax-punctuation">&gt;</span>
+  <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-stage</span> <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"stageSize"</span> <span class="sp-syntax-property">ref</span>=<span class="sp-syntax-string">"stageRef"</span><span class="sp-syntax-punctuation">&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-layer</span><span class="sp-syntax-punctuation">&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-text</span> <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"textConfig"</span> <span class="sp-syntax-punctuation">/&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-regular-polygon</span>
+        <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"triangleConfig"</span>
+        <span class="sp-syntax-property">@mouseout</span>=<span class="sp-syntax-string">"writeMessage('Mouseout triangle')"</span>
+        <span class="sp-syntax-property">@mousemove</span>=<span class="sp-syntax-string">"handleTriangleMouseMove"</span>
+      <span class="sp-syntax-punctuation">/&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-circle</span>
+        <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"circleConfig"</span>
+        <span class="sp-syntax-property">@mouseover</span>=<span class="sp-syntax-string">"writeMessage('Mouseover circle')"</span>
+        <span class="sp-syntax-property">@mouseout</span>=<span class="sp-syntax-string">"writeMessage('Mouseout circle')"</span>
+        <span class="sp-syntax-property">@mousedown</span>=<span class="sp-syntax-string">"writeMessage('Mousedown circle')"</span>
+        <span class="sp-syntax-property">@mouseup</span>=<span class="sp-syntax-string">"writeMessage('Mouseup circle')"</span>
+      <span class="sp-syntax-punctuation">/&gt;</span>
+    &lt;/v-layer&gt;
+  &lt;/v-stage&gt;
+&lt;/template&gt;
+
+<span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">script</span> <span class="sp-syntax-property">setup</span><span class="sp-syntax-punctuation">&gt;</span>
+<span class="sp-syntax-keyword">import</span> <span class="sp-syntax-punctuation">{</span> <span class="sp-syntax-plain">ref</span> <span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-keyword">from</span> <span class="sp-syntax-string">'vue'</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">stageRef</span> = <span class="sp-syntax-definition">ref</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-keyword">null</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">message</span> = <span class="sp-syntax-definition">ref</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">''</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">stageSize</span> = <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">width</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerWidth</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">height</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerHeight</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">textConfig</span> = <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">10</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">10</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fontFamily</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'Calibri'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fontSize</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">24</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">text</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">message</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'black'</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">triangleConfig</span> = <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">80</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">120</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">sides</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">3</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">radius</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">80</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'#00D2FF'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">stroke</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'black'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">strokeWidth</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">4</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">circleConfig</span> = <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">230</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">100</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">radius</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">60</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'red'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">stroke</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'black'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">strokeWidth</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">4</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">writeMessage</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">text</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-plain">message</span>.<span class="sp-syntax-property">value</span> = <span class="sp-syntax-plain">text</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">handleTriangleMouseMove</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">mousePos</span> = <span class="sp-syntax-plain">stageRef</span>.<span class="sp-syntax-property">value</span>.<span class="sp-syntax-property">getNode</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span>.<span class="sp-syntax-property">getPointerPosition</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+  <span class="sp-syntax-definition">writeMessage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'x: '</span> + <span class="sp-syntax-plain">mousePos</span>.<span class="sp-syntax-property">x</span> + <span class="sp-syntax-string">', y: '</span> + <span class="sp-syntax-plain">mousePos</span>.<span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">script</span><span class="sp-syntax-punctuation">&gt;</span>
+
+</pre></div></div></div><div class="sp-c-gvjhpQ sp-c-gvjhpQ-xpXQZ-direction-horizontal sp-resize-handler" data-direction="horizontal" style="left:calc(50% - 5px)"></div><div class="sp-c-euXojQ sp-preview sp-stack" style="flex-grow:50;flex-shrink:50;flex-basis:0;width:50%;gap:0;height:400px"><div class="sp-c-juMdfR sp-preview-container"><iframe class="sp-c-fgviib sp-preview-iframe" title="Sandpack Preview"></iframe><div class="sp-c-kwibBT sp-preview-actions"><a class="sp-icon-standalone sp-c-bxeRRt sp-c-gMfcns sp-c-dEbKhQ sp-button" href="https://codesandbox.io/api/v1/sandboxes/define?undefined&amp;environment=vue-cli" rel="noreferrer noopener" target="_blank" title="Open in CodeSandbox"><svg fill="none" height="16" stroke="currentColor" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><title>Open on CodeSandbox</title><path d="M6.66665 3.33337H4.33331C3.78103 3.33337 3.33331 3.78109 3.33331 4.33337V11.6667C3.33331 12.219 3.78103 12.6667 4.33331 12.6667H11.6666C12.2189 12.6667 12.6666 12.219 12.6666 11.6667V9.33337" stroke-linecap="round"></path><path d="M10 3.33337H12.5667C12.6219 3.33337 12.6667 3.37815 12.6667 3.43337V6.00004" stroke-linecap="round"></path><path d="M7.33331 8.66668L12.5333 3.46667" stroke-linecap="round"></path></svg><span>Open Sandbox</span></a></div></div></div></div></div></div></div></div></div></article>
+</body>
+</html>

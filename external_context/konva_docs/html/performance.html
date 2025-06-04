@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance - KonvaJS Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        .source-url {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 10px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="source-url">
+        <strong>Source:</strong> <a href="https://konvajs.org/docs/performance/All_Performance_Tips.html" target="_blank">https://konvajs.org/docs/performance/All_Performance_Tips.html</a>
+    </div>
+    <article><div class="theme-doc-markdown markdown"><p>Don't want to spend your time with performance issues? Request a <a href="https://lavrton.com/consulting" rel="noopener noreferrer" target="_blank">performance review</a>.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="why-this-is-important">Why this is important<a aria-label="Direct link to Why this is important" class="hash-link" href="https://konvajs.org/docs/performance/All_Performance_Tips.html#why-this-is-important" title="Direct link to Why this is important">​</a></h3>
+<p>The HTML5 canvas is efficient at what it does and internally <code>Konva</code> has many features that aim to provide great performance. However, when your project starts to grow in complexity, or when you just have a lot of shapes on the stage, there must inevitably be some negative performance impact.</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="optimization-targets">Optimization targets<a aria-label="Direct link to Optimization targets" class="hash-link" href="https://konvajs.org/docs/performance/All_Performance_Tips.html#optimization-targets" title="Direct link to Optimization targets">​</a></h3>
+<p>The optimizations here focus on two general rules:</p>
+<ul>
+<li>
+<p>Compute as little as possible: all computation takes time to complete. Each individual computation may run in a tiny fraction of a second, but the thousands or millions of computations caused by your code, Konva, JavaScript, and the layers below that, will add up to something more observable by the human eye if that super-slick animation or effect is, in fact, jerky.</p>
+</li>
+<li>
+<p><strong>Draw as little as possible</strong>: this is important because all drawing has a performance cost. There are two categories of cost - firstly the computation of the drawing which we covered in the point above, and then the movement of the drawing from memory to the screen. Depending on the case, there may also be intermediate off-screen compositing or per-pixel processing. The rule is therefore do as little drawing as possible.</p>
+</li>
+</ul>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="the-stage">The Stage<a aria-label="Direct link to The Stage" class="hash-link" href="https://konvajs.org/docs/performance/All_Performance_Tips.html#the-stage" title="Direct link to The Stage">​</a></h3>
+<ol>
+<li>
+<p>Optimise stage size - following the rule of 'draw as little as possible', try to avoid creating a large stage because moving all those bytes from memory to screen is going to have a negative impact. There are some tips <a href="https://konvajs.org/docs/sandbox/Canvas_Scrolling.html">here</a> that offer alternative approaches to the mega-stage problem!</p>
+</li>
+<li>
+<p>Set a viewport on mobile - Scaling images is a significant performance hit, so for mobile applications set viewport: <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"&gt;</code> which will avoid unnecessary scaling of your Konva output.</p>
+</li>
+<li>
+<p>Use <code>Konva.pixelRatio = 1</code> on retina devices - Konva automatically handles pixel ratio adjustments in order to render crisp drawings on all devices. But, just in case you have bad performance on retina devices, set <code>Konva.pixelRatio = 1</code> to reduce the scaling work Konva has to do. This setting might affect the output in some cases, so make sure that quality of the result is ok for you.</p>
+</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="layers">Layers<a aria-label="Direct link to Layers" class="hash-link" href="https://konvajs.org/docs/performance/All_Performance_Tips.html#layers" title="Direct link to Layers">​</a></h3>
+<ol>
+<li>
+<p><a href="https://konvajs.org/docs/performance/Layer_Management.html">Layer Management</a> - under the hood, each Konva layer is a separate HTML5 canvas element which gives some useful capabilities, including the ability to refresh only a layer that changed and so avoid the performance cost of refreshing the entire stage. But with great power great responsibility comes, and each layer has an incremental performance overhead so we should keep the number of layers to a minimum.</p>
+</li>
+<li>
+<p>Use <code>layer.listening(false)</code> - Konva gives us mouse and touch event listeners on all the shapes we draw. But there is a performance cost for each one, and for a layer with many shapes Konva has to expend many cycles checking which listeners might be triggered. If you have a layer on which none of the shapes need to react to events, take this burden away by setting <code>layer.listening(false)</code>. See <a href="https://konvajs.org/docs/sandbox/Animation_Stress_Test.html">Demo</a>. There is a similar point in the shapes section.</p>
+</li>
+<li>
+<p>Optimise dragging costs - while you drag a shape across a layer that layer must be redrawn per cycle of the move event listener. To avoid this performance cost, move the shape to a dedicated layer while dragging, then move it back to original layer at drag end. See <a href="https://konvajs.org/docs/sandbox/Drag_and_Drop_Stress_Test.html">Demo</a></p>
+</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="shapes">Shapes<a aria-label="Direct link to Shapes" class="hash-link" href="https://konvajs.org/docs/performance/All_Performance_Tips.html#shapes" title="Direct link to Shapes">​</a></h3>
+<ol>
+<li>
+<p><a href="https://konvajs.org/docs/performance/Shape_Caching.html">Shape Caching</a> - internally Konva makes an image of your shape and uses that when the shape has to be drawn. Drawing images avoids the overhead of composing the shape from its drawing instructions, and can increase performance impressively for complex shapes and groups.</p>
+</li>
+<li>
+<p>Keep the shapes tidy - each shape in your stage has a cost just to exist. To optimise performance, hide or remove from the layer any objects that become invisible / opacity = 0, or objects that go out of view.</p>
+</li>
+<li>
+<p>Use <code>shape.listening(false)</code> - as with layers (see point 7 above), Konva looks out for when events should be triggered for shapes, which has a performance cost. Telling a shape to stop listening for events reduces this cost, as explained at <a href="https://konvajs.org/docs/performance/Listening_False.html">Listening false</a>.</p>
+</li>
+<li>
+<p>Switch off perfect drawing - In some cases the result of drawing with the HTML5 canvas is not what you might have expected - see the demo for an example <a href="https://konvajs.org/docs/performance/Disable_Perfect_Draw.html">Disable Perfect Drawing</a>. Konva does extra work via its perfect drawing feature to put that right, but this comes with a performance cost. By setting <code>shape.perfectDrawEnabled(false)</code> this cost can be avoided, with no reduction in output quality, when a shape has fill, stroke and opacity.</p>
+</li>
+<li>
+<p><a href="https://konvajs.org/docs/performance/Optimize_Strokes.html">Optimize Stroke Drawing</a> - To achieve drawing results that look as expected, Konva makes an extra internal drawing when a shape has both stroke and shadow. Avoid this performance burden by switching off the shadow that Konva adds for the stroke.</p>
+</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="animations">Animations<a aria-label="Direct link to Animations" class="hash-link" href="https://konvajs.org/docs/performance/All_Performance_Tips.html#animations" title="Direct link to Animations">​</a></h3>
+<ol>
+<li><a href="https://konvajs.org/docs/performance/Optimize_Animation.html">Optimize Animation</a> - Avoiding unnecessary redraw costs for animation steps that fall between visual changes.</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="memory">Memory<a aria-label="Direct link to Memory" class="hash-link" href="https://konvajs.org/docs/performance/All_Performance_Tips.html#memory" title="Direct link to Memory">​</a></h3>
+<ol>
+<li><a href="https://konvajs.org/docs/performance/Avoid_Memory_Leaks.html">Avoid Memory Leaks</a> - Konva looks after a lot of cases where you might make memory leaks, but bringing shapes and tweens into the world and managing their exit is an area where you can help.</li>
+</ol>
+<p>Below is a demo showing some of these performance tips in action:</p>
+<!-- -->
+<div class="tabs-container tabList__CuJ"><ul aria-orientation="horizontal" class="tabs" role="tablist"><li aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active" role="tab" tabindex="0">Vanilla</li><li aria-selected="false" class="tabs__item tabItem_LNqP" role="tab" tabindex="-1">React</li><li aria-selected="false" class="tabs__item tabItem_LNqP" role="tab" tabindex="-1">Vue</li></ul><div class="margin-top--md"><div class="tabItem_Ymn6" role="tabpanel"><div class="light sp-c-fVPbOs sp-c-fVPbOs-gMQIch-variant-light sp-wrapper"><div class="sp-c-ikJbEZ sp-layout"><div class="sp-c-euXojQ sp-editor sp-stack" style="height:400px;flex-grow:50;flex-shrink:50;flex-basis:0;overflow:hidden"><div class="sp-c-dyHYiL sp-tabs" translate="no"><div aria-label="Select active file" class="sp-c-gGbYbQ sp-tabs-scrollable-container" role="tablist"><div aria-controls="/index.html-:R1mia7d6laqh:-tab-panel" aria-selected="false" class="sp-c-hluGOI sp-tab-container" role="tab"><button class="sp-c-bxeRRt sp-c-pacmO sp-tab-button" data-active="false" id="/index.html-:R1mia7d6laqh:-tab" tabindex="-1" title="/index.html" type="button">index.html</button></div><div aria-controls="/index.js-:R1mia7d6laqh:-tab-panel" aria-selected="true" class="sp-c-hluGOI sp-tab-container" role="tab"><button class="sp-c-bxeRRt sp-c-pacmO sp-tab-button" data-active="true" id="/index.js-:R1mia7d6laqh:-tab" tabindex="0" title="/index.js" type="button">index.js</button></div></div></div><div aria-labelledby="/index.js-:R1mia7d6laqh:-tab" class="sp-c-gtcpyq sp-code-editor" id="/index.js-:R1mia7d6laqh:-tab-panel" role="tabpanel"><div aria-autocomplete="list" aria-label="Code Editor for index.js" aria-multiline="true" class="sp-pristine sp-javascript sp-c-jOWzsE sp-c-jkvvao sp-cm" role="textbox" tabindex="0" translate="no"><pre class="sp-c-fWymNx sp-pre-placeholder" style="margin-left:var(--sp-space-5)"><span class="sp-syntax-keyword">import</span> <span class="sp-syntax-plain">Konva</span> <span class="sp-syntax-keyword">from</span> <span class="sp-syntax-string">'konva'</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-comment">// Create stage with good performance settings</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">stage</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Stage</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">container</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'container'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">width</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerWidth</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">height</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerHeight</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-comment">// Create layers with performance optimizations</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">backgroundLayer</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Layer</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">{</span> <span class="sp-syntax-property">listening</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">false</span> <span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">mainLayer</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Layer</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">dragLayer</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Layer</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-plain">stage</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">backgroundLayer</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">stage</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">mainLayer</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">stage</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">dragLayer</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-comment">// Create a shape with caching</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">star</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Star</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">200</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">200</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">numPoints</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">6</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">innerRadius</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">40</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">outerRadius</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">70</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'yellow'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">stroke</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'black'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">strokeWidth</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">4</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">draggable</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">true</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">perfectDrawEnabled</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">false</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-comment">// performance optimization</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-comment">// Cache the shape for better performance</span>
+<span class="sp-syntax-plain">star</span>.<span class="sp-syntax-property">cache</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-comment">// Optimize dragging performance</span>
+<span class="sp-syntax-plain">star</span>.<span class="sp-syntax-property">on</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'dragstart'</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-plain">star</span>.<span class="sp-syntax-property">moveTo</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">dragLayer</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-plain">star</span>.<span class="sp-syntax-property">on</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'dragend'</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-plain">star</span>.<span class="sp-syntax-property">moveTo</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">mainLayer</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-comment">// Create background with listening disabled</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">rect</span> = <span class="sp-syntax-keyword">new</span> <span class="sp-syntax-plain">Konva</span>.<span class="sp-syntax-property">Rect</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">0</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">0</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">width</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">stage</span>.<span class="sp-syntax-property">width</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">height</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">stage</span>.<span class="sp-syntax-property">height</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'lightgray'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">listening</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">false</span><span class="sp-syntax-punctuation">,</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-plain">backgroundLayer</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">rect</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-plain">mainLayer</span>.<span class="sp-syntax-property">add</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">star</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+</pre></div></div></div><div class="sp-c-gvjhpQ sp-c-gvjhpQ-xpXQZ-direction-horizontal sp-resize-handler" data-direction="horizontal" style="left:calc(50% - 5px)"></div><div class="sp-c-euXojQ sp-preview sp-stack" style="flex-grow:50;flex-shrink:50;flex-basis:0;width:50%;gap:0;height:400px"><div class="sp-c-juMdfR sp-preview-container"><iframe class="sp-c-fgviib sp-preview-iframe" title="Sandpack Preview"></iframe><div class="sp-c-kwibBT sp-preview-actions"><a class="sp-icon-standalone sp-c-bxeRRt sp-c-gMfcns sp-c-dEbKhQ sp-button" href="https://codesandbox.io/api/v1/sandboxes/define?undefined&amp;environment=parcel" rel="noreferrer noopener" target="_blank" title="Open in CodeSandbox"><svg fill="none" height="16" stroke="currentColor" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><title>Open on CodeSandbox</title><path d="M6.66665 3.33337H4.33331C3.78103 3.33337 3.33331 3.78109 3.33331 4.33337V11.6667C3.33331 12.219 3.78103 12.6667 4.33331 12.6667H11.6666C12.2189 12.6667 12.6666 12.219 12.6666 11.6667V9.33337" stroke-linecap="round"></path><path d="M10 3.33337H12.5667C12.6219 3.33337 12.6667 3.37815 12.6667 3.43337V6.00004" stroke-linecap="round"></path><path d="M7.33331 8.66668L12.5333 3.46667" stroke-linecap="round"></path></svg><span>Open Sandbox</span></a></div></div></div></div></div></div><div class="tabItem_Ymn6" hidden="" role="tabpanel"><div class="light sp-c-fVPbOs sp-c-fVPbOs-gMQIch-variant-light sp-wrapper"><div class="sp-c-ikJbEZ sp-layout"><div class="sp-c-euXojQ sp-editor sp-stack" style="height:400px;flex-grow:50;flex-shrink:50;flex-basis:0;overflow:hidden"><div aria-labelledby="/App.js-:R1qia7d6laqh:-tab" class="sp-c-gtcpyq sp-code-editor" id="/App.js-:R1qia7d6laqh:-tab-panel" role="tabpanel"><div aria-autocomplete="list" aria-label="Code Editor for App.js" aria-multiline="true" class="sp-pristine sp-javascript sp-c-jOWzsE sp-c-jkvvao sp-cm" role="textbox" tabindex="0" translate="no"><pre class="sp-c-fWymNx sp-pre-placeholder" style="margin-left:var(--sp-space-5)"><span class="sp-syntax-keyword">import</span> <span class="sp-syntax-punctuation">{</span> <span class="sp-syntax-plain">Stage</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">Layer</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">Star</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">Rect</span> <span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-keyword">from</span> <span class="sp-syntax-string">'react-konva'</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-keyword">import</span> <span class="sp-syntax-punctuation">{</span> <span class="sp-syntax-plain">useState</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">useRef</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">useEffect</span> <span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-keyword">from</span> <span class="sp-syntax-string">'react'</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">App</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-punctuation">[</span><span class="sp-syntax-plain">starLayer</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">setStarLayer</span><span class="sp-syntax-punctuation">]</span> = <span class="sp-syntax-definition">useState</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'main'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+  <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">starRef</span> = <span class="sp-syntax-definition">useRef</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-keyword">null</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+  <span class="sp-syntax-definition">useEffect</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+    <span class="sp-syntax-comment">// Cache the shape for better performance</span>
+    <span class="sp-syntax-keyword">if</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">starRef</span>.<span class="sp-syntax-property">current</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">{</span>
+      <span class="sp-syntax-plain">starRef</span>.<span class="sp-syntax-property">current</span>.<span class="sp-syntax-property">cache</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+    <span class="sp-syntax-punctuation">}</span>
+  <span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-punctuation">[</span><span class="sp-syntax-punctuation">]</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+  <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">handleDragStart</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+    <span class="sp-syntax-definition">setStarLayer</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'drag'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+  <span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+  <span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">handleDragEnd</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+    <span class="sp-syntax-definition">setStarLayer</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'main'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+  <span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+  <span class="sp-syntax-keyword">return</span> <span class="sp-syntax-punctuation">(</span>
+    <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Stage</span> <span class="sp-syntax-property">width</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerWidth</span><span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-property">height</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerHeight</span><span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Layer</span> <span class="sp-syntax-property">listening</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">false</span><span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">&gt;</span>
+        <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Rect</span>
+          <span class="sp-syntax-property">x</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">0</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">y</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">0</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">width</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerWidth</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">height</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerHeight</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-property">fill</span>=<span class="sp-syntax-string">"lightgray"</span>
+        <span class="sp-syntax-punctuation">/&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">Layer</span><span class="sp-syntax-punctuation">&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Layer</span><span class="sp-syntax-punctuation">&gt;</span>
+        <span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">starLayer</span> === <span class="sp-syntax-string">'main'</span> &amp;&amp; <span class="sp-syntax-punctuation">(</span>
+          <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Star</span>
+            <span class="sp-syntax-property">ref</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">starRef</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">x</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">200</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">y</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">200</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">numPoints</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">6</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">innerRadius</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">40</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">outerRadius</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">70</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">fill</span>=<span class="sp-syntax-string">"yellow"</span>
+            <span class="sp-syntax-property">stroke</span>=<span class="sp-syntax-string">"black"</span>
+            <span class="sp-syntax-property">strokeWidth</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">4</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">draggable</span>
+            <span class="sp-syntax-property">perfectDrawEnabled</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">false</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">onDragStart</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">handleDragStart</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">onDragEnd</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">handleDragEnd</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-punctuation">/&gt;</span>
+        <span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">}</span>
+      <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">Layer</span><span class="sp-syntax-punctuation">&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Layer</span><span class="sp-syntax-punctuation">&gt;</span>
+        <span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">starLayer</span> === <span class="sp-syntax-string">'drag'</span> &amp;&amp; <span class="sp-syntax-punctuation">(</span>
+          <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">Star</span>
+            <span class="sp-syntax-property">ref</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">starRef</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">x</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">200</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">y</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">200</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">numPoints</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">6</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">innerRadius</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">40</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">outerRadius</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">70</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">fill</span>=<span class="sp-syntax-string">"yellow"</span>
+            <span class="sp-syntax-property">stroke</span>=<span class="sp-syntax-string">"black"</span>
+            <span class="sp-syntax-property">strokeWidth</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">4</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">draggable</span>
+            <span class="sp-syntax-property">perfectDrawEnabled</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-static">false</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">onDragStart</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">handleDragStart</span><span class="sp-syntax-punctuation">}</span>
+            <span class="sp-syntax-property">onDragEnd</span>=<span class="sp-syntax-punctuation">{</span><span class="sp-syntax-plain">handleDragEnd</span><span class="sp-syntax-punctuation">}</span>
+          <span class="sp-syntax-punctuation">/&gt;</span>
+        <span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">}</span>
+      <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">Layer</span><span class="sp-syntax-punctuation">&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">Stage</span><span class="sp-syntax-punctuation">&gt;</span>
+  <span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">export</span> <span class="sp-syntax-keyword">default</span> <span class="sp-syntax-plain">App</span><span class="sp-syntax-punctuation">;</span>
+
+</pre></div></div></div><div class="sp-c-gvjhpQ sp-c-gvjhpQ-xpXQZ-direction-horizontal sp-resize-handler" data-direction="horizontal" style="left:calc(50% - 5px)"></div><div class="sp-c-euXojQ sp-preview sp-stack" style="flex-grow:50;flex-shrink:50;flex-basis:0;width:50%;gap:0;height:400px"><div class="sp-c-juMdfR sp-preview-container"><iframe class="sp-c-fgviib sp-preview-iframe" title="Sandpack Preview"></iframe><div class="sp-c-kwibBT sp-preview-actions"><a class="sp-icon-standalone sp-c-bxeRRt sp-c-gMfcns sp-c-dEbKhQ sp-button" href="https://codesandbox.io/api/v1/sandboxes/define?undefined&amp;environment=create-react-app" rel="noreferrer noopener" target="_blank" title="Open in CodeSandbox"><svg fill="none" height="16" stroke="currentColor" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><title>Open on CodeSandbox</title><path d="M6.66665 3.33337H4.33331C3.78103 3.33337 3.33331 3.78109 3.33331 4.33337V11.6667C3.33331 12.219 3.78103 12.6667 4.33331 12.6667H11.6666C12.2189 12.6667 12.6666 12.219 12.6666 11.6667V9.33337" stroke-linecap="round"></path><path d="M10 3.33337H12.5667C12.6219 3.33337 12.6667 3.37815 12.6667 3.43337V6.00004" stroke-linecap="round"></path><path d="M7.33331 8.66668L12.5333 3.46667" stroke-linecap="round"></path></svg><span>Open Sandbox</span></a></div></div></div></div></div></div><div class="tabItem_Ymn6" hidden="" role="tabpanel"><div class="light sp-c-fVPbOs sp-c-fVPbOs-gMQIch-variant-light sp-wrapper"><div class="sp-c-ikJbEZ sp-layout"><div class="sp-c-euXojQ sp-editor sp-stack" style="height:400px;flex-grow:50;flex-shrink:50;flex-basis:0;overflow:hidden"><div class="sp-c-dyHYiL sp-tabs" translate="no"><div aria-label="Select active file" class="sp-c-gGbYbQ sp-tabs-scrollable-container" role="tablist"><div aria-controls="/src/App.vue-:R1uia7d6laqh:-tab-panel" aria-selected="true" class="sp-c-hluGOI sp-tab-container" role="tab"><button class="sp-c-bxeRRt sp-c-pacmO sp-tab-button" data-active="true" id="/src/App.vue-:R1uia7d6laqh:-tab" tabindex="0" title="/src/App.vue" type="button">App.vue</button></div><div aria-controls="/src/main.js-:R1uia7d6laqh:-tab-panel" aria-selected="false" class="sp-c-hluGOI sp-tab-container" role="tab"><button class="sp-c-bxeRRt sp-c-pacmO sp-tab-button" data-active="false" id="/src/main.js-:R1uia7d6laqh:-tab" tabindex="-1" title="/src/main.js" type="button">main.js</button></div></div></div><div aria-labelledby="/src/App.vue-:R1uia7d6laqh:-tab" class="sp-c-gtcpyq sp-code-editor" id="/src/App.vue-:R1uia7d6laqh:-tab-panel" role="tabpanel"><div aria-autocomplete="list" aria-label="Code Editor for App.vue" aria-multiline="true" class="sp-pristine sp-html sp-c-jOWzsE sp-c-jkvvao sp-cm" role="textbox" tabindex="0" translate="no"><pre class="sp-c-fWymNx sp-pre-placeholder" style="margin-left:var(--sp-space-5)"><span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">template</span><span class="sp-syntax-punctuation">&gt;</span>
+  <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-stage</span> <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"stageSize"</span><span class="sp-syntax-punctuation">&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-layer</span> <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"{ listening: false }"</span><span class="sp-syntax-punctuation">&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-rect</span> <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"rectConfig"</span> <span class="sp-syntax-punctuation">/&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">v-layer</span><span class="sp-syntax-punctuation">&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-layer</span><span class="sp-syntax-punctuation">&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-star</span>
+        <span class="sp-syntax-property">v-if</span>=<span class="sp-syntax-string">"starLayer === 'main'"</span>
+        <span class="sp-syntax-property">ref</span>=<span class="sp-syntax-string">"starRef"</span>
+        <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"starConfig"</span>
+        <span class="sp-syntax-property">@dragstart</span>=<span class="sp-syntax-string">"handleDragStart"</span>
+        <span class="sp-syntax-property">@dragend</span>=<span class="sp-syntax-string">"handleDragEnd"</span>
+      <span class="sp-syntax-punctuation">/&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">v-layer</span><span class="sp-syntax-punctuation">&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-layer</span><span class="sp-syntax-punctuation">&gt;</span>
+      <span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">v-star</span>
+        <span class="sp-syntax-property">v-if</span>=<span class="sp-syntax-string">"starLayer === 'drag'"</span>
+        <span class="sp-syntax-property">ref</span>=<span class="sp-syntax-string">"starRef"</span>
+        <span class="sp-syntax-property">:config</span>=<span class="sp-syntax-string">"starConfig"</span>
+        <span class="sp-syntax-property">@dragstart</span>=<span class="sp-syntax-string">"handleDragStart"</span>
+        <span class="sp-syntax-property">@dragend</span>=<span class="sp-syntax-string">"handleDragEnd"</span>
+      <span class="sp-syntax-punctuation">/&gt;</span>
+    <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">v-layer</span><span class="sp-syntax-punctuation">&gt;</span>
+  <span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">v-stage</span><span class="sp-syntax-punctuation">&gt;</span>
+<span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">template</span><span class="sp-syntax-punctuation">&gt;</span>
+
+<span class="sp-syntax-punctuation">&lt;</span><span class="sp-syntax-definition">script</span> <span class="sp-syntax-property">setup</span><span class="sp-syntax-punctuation">&gt;</span>
+<span class="sp-syntax-keyword">import</span> <span class="sp-syntax-punctuation">{</span> <span class="sp-syntax-plain">ref</span><span class="sp-syntax-punctuation">,</span> <span class="sp-syntax-plain">onMounted</span> <span class="sp-syntax-punctuation">}</span> <span class="sp-syntax-keyword">from</span> <span class="sp-syntax-string">'vue'</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">stageSize</span> = <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">width</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerWidth</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">height</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerHeight</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">rectConfig</span> = <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">0</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">0</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">width</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerWidth</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">height</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-plain">window</span>.<span class="sp-syntax-property">innerHeight</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'lightgray'</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">starConfig</span> = <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-property">x</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">200</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">y</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">200</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">numPoints</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">6</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">innerRadius</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">40</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">outerRadius</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">70</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">fill</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'yellow'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">stroke</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-string">'black'</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">strokeWidth</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">4</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">draggable</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">true</span><span class="sp-syntax-punctuation">,</span>
+  <span class="sp-syntax-property">perfectDrawEnabled</span><span class="sp-syntax-punctuation">:</span> <span class="sp-syntax-static">false</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">starLayer</span> = <span class="sp-syntax-definition">ref</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-string">'main'</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">starRef</span> = <span class="sp-syntax-definition">ref</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-keyword">null</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-definition">onMounted</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-comment">// Cache the shape for better performance</span>
+  <span class="sp-syntax-keyword">if</span> <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-plain">starRef</span>.<span class="sp-syntax-property">value</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">{</span>
+    <span class="sp-syntax-plain">starRef</span>.<span class="sp-syntax-property">value</span>.<span class="sp-syntax-property">getNode</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span>.<span class="sp-syntax-property">cache</span><span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+  <span class="sp-syntax-punctuation">}</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">)</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">handleDragStart</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-plain">starLayer</span>.<span class="sp-syntax-property">value</span> = <span class="sp-syntax-string">'drag'</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+
+<span class="sp-syntax-keyword">const</span> <span class="sp-syntax-plain">handleDragEnd</span> = <span class="sp-syntax-punctuation">(</span><span class="sp-syntax-punctuation">)</span> <span class="sp-syntax-punctuation">=&gt;</span> <span class="sp-syntax-punctuation">{</span>
+  <span class="sp-syntax-plain">starLayer</span>.<span class="sp-syntax-property">value</span> = <span class="sp-syntax-string">'main'</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">}</span><span class="sp-syntax-punctuation">;</span>
+<span class="sp-syntax-punctuation">&lt;/</span><span class="sp-syntax-definition">script</span><span class="sp-syntax-punctuation">&gt;</span>
+
+</pre></div></div></div><div class="sp-c-gvjhpQ sp-c-gvjhpQ-xpXQZ-direction-horizontal sp-resize-handler" data-direction="horizontal" style="left:calc(50% - 5px)"></div><div class="sp-c-euXojQ sp-preview sp-stack" style="flex-grow:50;flex-shrink:50;flex-basis:0;width:50%;gap:0;height:400px"><div class="sp-c-juMdfR sp-preview-container"><iframe class="sp-c-fgviib sp-preview-iframe" title="Sandpack Preview"></iframe><div class="sp-c-kwibBT sp-preview-actions"><a class="sp-icon-standalone sp-c-bxeRRt sp-c-gMfcns sp-c-dEbKhQ sp-button" href="https://codesandbox.io/api/v1/sandboxes/define?undefined&amp;environment=vue-cli" rel="noreferrer noopener" target="_blank" title="Open in CodeSandbox"><svg fill="none" height="16" stroke="currentColor" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg"><title>Open on CodeSandbox</title><path d="M6.66665 3.33337H4.33331C3.78103 3.33337 3.33331 3.78109 3.33331 4.33337V11.6667C3.33331 12.219 3.78103 12.6667 4.33331 12.6667H11.6666C12.2189 12.6667 12.6666 12.219 12.6666 11.6667V9.33337" stroke-linecap="round"></path><path d="M10 3.33337H12.5667C12.6219 3.33337 12.6667 3.37815 12.6667 3.43337V6.00004" stroke-linecap="round"></path><path d="M7.33331 8.66668L12.5333 3.46667" stroke-linecap="round"></path></svg><span>Open Sandbox</span></a></div></div></div></div></div></div></div></div></div></article>
+</body>
+</html>

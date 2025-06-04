@@ -1,0 +1,6 @@
+Svelte - KonvaJS Documentation
+==============================
+
+Source: https://konvajs.org/docs/svelte/index.html
+
+How to use canvas with Svelte?​ svelte-konva is a JavaScript library for drawing complex canvas graphics using Svelte. GitHub: https://github.com/konvajs/svelte-konva It provides declarative and reactive bindings to the Konva Framework. All svelte-konva components correspond to Konva components of the same name. All the parameters available for Konva objects can be added as config prop for corresponding svalte-konva components. To get more info about Konva you can read Konva Overview. Quick Start​ 1 Install via npm​ npm i svelte-konva konva 2 Import and use svelte konva components​ <script> import { Stage, Layer, Rect } from 'svelte-konva';</script><Stage config={{ width: window.innerWidth, height: window.innerHeight }}> <Layer> <Rect config={{ x: 100, y: 100, width: 400, height: 200, fill: 'blue' }} /> </Layer></Stage>
