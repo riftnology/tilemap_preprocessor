@@ -3,6 +3,7 @@ import { Stage, Layer, Image as KonvaImage, Rect, Transformer, Line } from 'reac
 import { ProcessedImage, ImageProcessingOptions } from '../types';
 import { processImage } from '../utils/imageUtils';
 import { RotateCw, FlipHorizontal, FlipVertical, Grid2X2, Crop, ChevronLeft, ChevronRight, Brush, Eraser } from 'lucide-react';
+import LivePreview from './LivePreview';
 import Konva from 'konva';
 
 interface ImageProcessorProps {
@@ -44,7 +45,16 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
     strokeWidth: number;
     globalCompositeOperation: string;
   }>>([]);
+  const [rectangles, setRectangles] = useState<Array<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    fill: string;
+    globalCompositeOperation: string;
+  }>>([]);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [lastPaintPos, setLastPaintPos] = useState<{x: number, y: number} | null>(null);
   const [gridLines, setGridLines] = useState<Array<{
     points: number[];
     stroke: string;
@@ -55,7 +65,6 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
   const imageRef = useRef<Konva.Image>(null);
   const cropRectRef = useRef<Konva.Rect>(null);
   const transformerRef = useRef<Konva.Transformer>(null);
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (imageFile && !imageFiles.includes(imageFile)) {
@@ -135,13 +144,6 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
     }
   }, [selectedTool, cropRect]);
 
-  // Update preview when options change
-  useEffect(() => {
-    if (konvaImage) {
-      updatePreview();
-    }
-  }, [options, cropRect, lines, konvaImage]);
-
   // Apply custom cursor for brush tools
   useEffect(() => {
     if (stageRef.current) {
@@ -210,12 +212,19 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
     if (selectedTool === 'paint' || selectedTool === 'erase') {
       setIsDrawing(true);
       const pos = e.target.getStage().getPointerPosition();
-      setLines([...lines, {
-        points: [pos.x, pos.y],
-        stroke: selectedTool === 'erase' ? '#FFFFFF' : brushColor,
-        strokeWidth: selectedTool === 'erase' ? brushSize * 2 : brushSize,
+      
+      // Draw a square instead of starting a line
+      const squareSize = selectedTool === 'erase' ? brushSize * 2 : brushSize;
+      const newRect = {
+        x: pos.x - squareSize / 2,
+        y: pos.y - squareSize / 2,
+        width: squareSize,
+        height: squareSize,
+        fill: selectedTool === 'erase' ? '#FFFFFF' : brushColor,
         globalCompositeOperation: selectedTool === 'erase' ? 'destination-out' : 'source-over'
-      }]);
+      };
+      setRectangles(prev => [...prev, newRect]);
+      setLastPaintPos({x: pos.x, y: pos.y});
     }
   };
 
@@ -224,16 +233,34 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
     
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
-    const lastLine = lines[lines.length - 1];
     
-    if (lastLine) {
-      lastLine.points = lastLine.points.concat([point.x, point.y]);
-      setLines([...lines.slice(0, -1), lastLine]);
+    // Throttle painting to prevent too many rectangles
+    if (lastPaintPos) {
+      const distance = Math.sqrt(
+        Math.pow(point.x - lastPaintPos.x, 2) + Math.pow(point.y - lastPaintPos.y, 2)
+      );
+      // Only paint if moved more than half the brush size
+      const squareSize = selectedTool === 'erase' ? brushSize * 2 : brushSize;
+      if (distance < squareSize / 2) return;
     }
+    
+    // Continue drawing squares for continuous painting
+    const squareSize = selectedTool === 'erase' ? brushSize * 2 : brushSize;
+    const newRect = {
+      x: point.x - squareSize / 2,
+      y: point.y - squareSize / 2,
+      width: squareSize,
+      height: squareSize,
+      fill: selectedTool === 'erase' ? '#FFFFFF' : brushColor,
+      globalCompositeOperation: selectedTool === 'erase' ? 'destination-out' : 'source-over'
+    };
+    setRectangles(prev => [...prev, newRect]);
+    setLastPaintPos({x: point.x, y: point.y});
   };
 
   const handleStageMouseUp = () => {
     setIsDrawing(false);
+    setLastPaintPos(null);
   };
 
   const handleProcess = async () => {
@@ -241,7 +268,7 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
     
     setIsProcessing(true);
     try {
-      // Export the stage as image data
+      // Export the stage as image data including all painted rectangles
       const dataURL = stageRef.current.toDataURL({
         x: cropRect.x,
         y: cropRect.y,
@@ -278,6 +305,9 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
             const file = new File([blob], 'processed.png', { type: 'image/png' });
             const processedImages = await processImage(file, options);
             onProcessingComplete(processedImages);
+            // Clear the painted elements after processing
+            setLines([]);
+            setRectangles([]);
           }
         });
       };
@@ -304,87 +334,25 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
   const createBrushCursor = (size: number, color: string) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
-    const diameter = Math.max(size, 4);
+    const dimension = Math.max(size, 4);
     
-    canvas.width = diameter + 4;
-    canvas.height = diameter + 4;
+    canvas.width = dimension + 4;
+    canvas.height = dimension + 4;
     
+    // Draw square border
     ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, diameter / 2, 0, Math.PI * 2);
+    ctx.rect(2, 2, dimension, dimension);
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 1;
     ctx.stroke();
     
+    // Fill square
     ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, Math.max(diameter / 2 - 1, 1), 0, Math.PI * 2);
+    ctx.rect(3, 3, dimension - 2, dimension - 2);
     ctx.fillStyle = selectedTool === 'erase' ? '#fff' : color;
     ctx.fill();
     
     return `url(${canvas.toDataURL()}) ${canvas.width / 2} ${canvas.height / 2}, crosshair`;
-  };
-
-  const updatePreview = () => {
-    if (!stageRef.current || !previewCanvasRef.current) return;
-
-    const previewCanvas = previewCanvasRef.current;
-    const previewCtx = previewCanvas.getContext('2d')!;
-    
-    // Set canvas to fixed 500x500 for actual rendering
-    previewCanvas.width = 500;
-    previewCanvas.height = 500;
-    
-    // Export the cropped area from the stage
-    const dataURL = stageRef.current.toDataURL({
-      x: cropRect.x,
-      y: cropRect.y,
-      width: cropRect.width,
-      height: cropRect.height,
-      pixelRatio: 1
-    });
-    
-    const img = new window.Image();
-    img.onload = () => {
-      previewCtx.save();
-      previewCtx.translate(250, 250); // Center of 500x500 canvas
-      
-      if (options.rotation) {
-        previewCtx.rotate((options.rotation * Math.PI) / 180);
-      }
-      if (options.flipX || options.flipY) {
-        previewCtx.scale(options.flipX ? -1 : 1, options.flipY ? -1 : 1);
-      }
-      
-      previewCtx.translate(-250, -250);
-      previewCtx.drawImage(img, 0, 0, 500, 500);
-      
-      // Draw grid lines if split into tiles is enabled
-      if (options.splitIntoTiles) {
-        const tileSize = options.tileSize;
-        const scaledTileSize = (tileSize / options.outputSize) * 500;
-        
-        previewCtx.strokeStyle = '#00ff00'; // Bright green
-        previewCtx.lineWidth = 2;
-        
-        // Draw vertical lines
-        for (let x = scaledTileSize; x < 500; x += scaledTileSize) {
-          previewCtx.beginPath();
-          previewCtx.moveTo(x, 0);
-          previewCtx.lineTo(x, 500);
-          previewCtx.stroke();
-        }
-        
-        // Draw horizontal lines
-        for (let y = scaledTileSize; y < 500; y += scaledTileSize) {
-          previewCtx.beginPath();
-          previewCtx.moveTo(0, y);
-          previewCtx.lineTo(500, y);
-          previewCtx.stroke();
-        }
-      }
-      
-      previewCtx.restore();
-    };
-    img.src = dataURL;
   };
 
   const fitCropToImage = () => {
@@ -410,8 +378,8 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
     <div className="mt-6 bg-white rounded-lg shadow-md p-6">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">Process Image</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
+      <div className="grid grid-cols-1 gap-6" style={{ display: 'flex', alignItems: 'flex-start' }}>
+        <div style={{ minWidth: '1024px' }}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-4">
               <h3 className="text-lg font-medium text-gray-700">Original & Tools</h3>
@@ -519,17 +487,16 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
                     height={konvaImage.height}
                   />
                   
-                  {/* Draw lines for painting */}
-                  {lines.map((line, i) => (
-                    <Line
+                  {/* Draw rectangles for painting */}
+                  {rectangles.map((rect, i) => (
+                    <Rect
                       key={i}
-                      points={line.points}
-                      stroke={line.stroke}
-                      strokeWidth={line.strokeWidth}
-                      tension={0.5}
-                      lineCap="round"
-                      lineJoin="round"
-                      globalCompositeOperation={line.globalCompositeOperation as any}
+                      x={rect.x}
+                      y={rect.y}
+                      width={rect.width}
+                      height={rect.height}
+                      fill={rect.fill}
+                      globalCompositeOperation={rect.globalCompositeOperation as any}
                     />
                   ))}
                   
@@ -607,7 +574,7 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
           </div>
         </div>
         
-        <div>
+        <div className='settings-container' style={{ marginLeft: '50px', minWidth: '300px', flexShrink: 0 }}>
           <h3 className="text-lg font-medium mb-3 text-gray-700">Settings</h3>
           
           <div className="space-y-4">
@@ -748,28 +715,29 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
             </div>
             
             {/* Live Preview */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Live Preview
-              </label>
-              <div className="border rounded bg-gray-50 p-2 flex items-center justify-center">
-                <canvas
-                  ref={previewCanvasRef}
-                  className="border border-gray-300 bg-white"
-                  style={{
-                    width: '200px',
-                    height: '200px',
-                    imageRendering: 'pixelated'
+            <LivePreview
+              stageRef={stageRef}
+              cropRect={cropRect}
+              options={options}
+              lines={lines}
+              rectangles={rectangles}
+              konvaImage={konvaImage}
+            />
+
+            {/* Clear button for painted elements */}
+            {(rectangles.length > 0 || lines.length > 0) && (
+              <div>
+                <button
+                  className="w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  onClick={() => {
+                    setLines([]);
+                    setRectangles([]);
                   }}
-                />
+                >
+                  Clear Painting
+                </button>
               </div>
-              <div className="text-xs text-gray-500 mt-1 text-center">
-                Output: {options.outputSize}×{options.outputSize}px
-                {options.splitIntoTiles && (
-                  <span className="block">Grid: {options.tileSize}×{options.tileSize}px tiles</span>
-                )}
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -97,8 +97,8 @@ function App() {
         )}
         
         {activeStep === 'edit' && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            <div className="lg:col-span-1">
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-80">
               <TilePalette 
                 processedImages={processedImages}
                 selectedTileId={selectedTile?.id || null}
@@ -138,7 +138,7 @@ function App() {
               </div>
             </div>
             
-            <div className="lg:col-span-3">
+            <div className="flex-1 min-w-0">
               <TilemapEditor 
                 selectedTile={selectedTile}
                 onTilemapChange={handleTilemapChange}

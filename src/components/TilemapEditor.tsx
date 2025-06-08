@@ -14,8 +14,8 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
   onTilemapChange,
   tilemap
 }) => {
-  const [mapWidth, setMapWidth] = useState(10);
-  const [mapHeight, setMapHeight] = useState(10);
+  const [mapWidth, setMapWidth] = useState(32);
+  const [mapHeight, setMapHeight] = useState(32);
   const [tileSize] = useState(32);
   const [mapName, setMapName] = useState('New Tilemap');
   const [tiles, setTiles] = useState<(Tile | null)[][]>([]);
@@ -198,7 +198,7 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
         </div>
       </div>
       
-      <div className="overflow-auto max-h-[500px] border rounded-lg bg-gray-100 p-2">
+      <div className="overflow-auto border rounded-lg bg-gray-100 p-2" style={{ maxHeight: '70vh', maxWidth: '1080px' }}>
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-gray-500">Loading tilemap...</div>
@@ -208,7 +208,9 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
             className={`inline-block ${showGrid ? 'bg-grid-pattern' : ''}`}
             style={{
               backgroundSize: `${tileSize}px ${tileSize}px`,
-              backgroundImage: showGrid ? 'linear-gradient(to right, #ccc 1px, transparent 1px), linear-gradient(to bottom, #ccc 1px, transparent 1px)' : 'none'
+              backgroundImage: showGrid ? 'linear-gradient(to right, #ccc 1px, transparent 1px), linear-gradient(to bottom, #ccc 1px, transparent 1px)' : 'none',
+              width: `${mapWidth * tileSize}px`,
+              height: `${mapHeight * tileSize}px`
             }}
           >
             {tiles.map((row, rowIndex) => (
