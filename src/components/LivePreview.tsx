@@ -117,16 +117,16 @@ const LivePreview: React.FC<LivePreviewProps> = ({
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
         Live Preview
       </label>
-      <div className="border rounded bg-gray-50 p-2 flex items-center justify-center">
+      <div className="border rounded bg-gray-50 p-1 flex items-center justify-center">
         <canvas
           ref={previewCanvasRef}
           className="border border-gray-300 bg-white"
           style={{
-            width: '200px',
-            height: '200px',
+            width: '160px',
+            height: '160px',
             imageRendering: 'pixelated'
           }}
         />

@@ -421,14 +421,14 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
   };
 
   return (
-    <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Process Image</h2>
+    <div className="mt-4 bg-white rounded-lg shadow-md p-4">
+      <h2 className="text-lg font-semibold mb-3 text-gray-800">Process Image</h2>
       
-      <div className="grid grid-cols-1 gap-6" style={{ display: 'flex', alignItems: 'flex-start' }}>
-        <div style={{ minWidth: '1024px' }}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-4">
-              <h3 className="text-lg font-medium text-gray-700">Original & Tools</h3>
+      <div className="grid grid-cols-1 gap-4" style={{ display: 'flex', alignItems: 'flex-start' }}>
+        <div style={{ minWidth: '900px' }}>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-3">
+              <h3 className="text-base font-medium text-gray-700">Original & Tools</h3>
               <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
                 <button
                   className={`p-2 rounded ${selectedTool === 'crop' ? 'bg-white shadow text-blue-600' : 'text-gray-600'}`}
@@ -489,16 +489,16 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
             )}
           </div>
 
-          <div className="flex space-x-4 mb-3">
+          <div className="flex space-x-3 mb-2">
             <div className="bg-gray-100 rounded-lg p-2">
-              <span className="text-sm font-medium text-gray-600">Original Size: </span>
-              <span className="text-sm text-gray-800">
+              <span className="text-xs font-medium text-gray-600">Original Size: </span>
+              <span className="text-xs text-gray-800">
                 {konvaImage ? `${konvaImage.width}×${konvaImage.height}px` : 'Loading...'}
               </span>
             </div>
             <div className="bg-gray-100 rounded-lg p-2">
-              <span className="text-sm font-medium text-gray-600">Stage Size: </span>
-              <span className="text-sm text-gray-800">
+              <span className="text-xs font-medium text-gray-600">Stage Size: </span>
+              <span className="text-xs text-gray-800">
                 {`${stageSize.width}×${stageSize.height}px`}
               </span>
             </div>
@@ -620,10 +620,10 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
           </div>
         </div>
         
-        <div className='settings-container' style={{ marginLeft: '50px', minWidth: '300px', flexShrink: 0 }}>
-          <h3 className="text-lg font-medium mb-3 text-gray-700">Settings</h3>
+        <div className='settings-container' style={{ marginLeft: '40px', minWidth: '280px', flexShrink: 0 }}>
+          <h3 className="text-base font-medium mb-2 text-gray-700">Settings</h3>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Rotation

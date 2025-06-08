@@ -152,9 +152,9 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-        <div className="mb-4 md:mb-0">
+    <div className="bg-white rounded-lg shadow-md p-3">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
+        <div className="mb-3 md:mb-0">
           <label htmlFor="mapName" className="block text-sm font-medium text-gray-700 mb-1">
             Tilemap Name
           </label>
@@ -163,29 +163,29 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
             id="mapName"
             value={mapName}
             onChange={(e) => setMapName(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
           />
         </div>
         
-        <div className="flex space-x-2">
+        <div className="flex space-x-1">
           <button 
-            className="flex items-center px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            className="flex items-center px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm"
             onClick={handleExport}
           >
-            <Save className="w-4 h-4 mr-1" />
+            <Save className="w-3 h-3 mr-1" />
             Export
           </button>
           
           <button 
-            className="flex items-center px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+            className="flex items-center px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors text-sm"
             onClick={() => setShowGrid(!showGrid)}
           >
-            <Grid className="w-4 h-4 mr-1" />
+            <Grid className="w-3 h-3 mr-1" />
             {showGrid ? 'Hide Grid' : 'Show Grid'}
           </button>
           
-          <label className="flex items-center px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors cursor-pointer">
-            <Upload className="w-4 h-4 mr-1" />
+          <label className="flex items-center px-2 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors cursor-pointer text-sm">
+            <Upload className="w-3 h-3 mr-1" />
             Import
             <input 
               type="file" 
@@ -198,7 +198,7 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
         </div>
       </div>
       
-      <div className="overflow-auto border rounded-lg bg-gray-100 p-2" style={{ maxHeight: '70vh', maxWidth: '1080px' }}>
+      <div className="overflow-auto border rounded-lg bg-gray-100 p-1" style={{ maxHeight: '65vh', maxWidth: '950px' }}>
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-gray-500">Loading tilemap...</div>
@@ -256,7 +256,7 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
       
       <canvas ref={canvasRef} className="hidden" />
       
-      <div className="mt-4 text-sm text-gray-600">
+      <div className="mt-3 text-xs text-gray-600">
         <p>Left-click to place selected tile. Right-click to remove tile.</p>
       </div>
     </div>
