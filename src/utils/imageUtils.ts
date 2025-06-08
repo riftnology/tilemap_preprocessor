@@ -1,4 +1,4 @@
-import { ProcessedImage, ImageProcessingOptions } from '../types';
+import { ProcessedImage, ImageProcessingOptions, Tile } from '../types';
 
 export const generateId = (): string => {
   return Math.random().toString(36).substring(2, 15);
@@ -191,4 +191,51 @@ export const loadTilemapFromImage = async (
   }
   
   return tiles;
+};
+
+export const extractTilesFromTilemap = async (
+  imageUrl: string,
+  tileSize: number,
+  spacing: number = 2
+): Promise<ProcessedImage[]> => {
+  const img = await loadImage(imageUrl);
+  // Calculate tiles considering spacing: each tile takes tileSize + spacing, except the last row/column
+  const tilesX = Math.floor((img.width + spacing) / (tileSize + spacing));
+  const tilesY = Math.floor((img.height + spacing) / (tileSize + spacing));
+  const processedImages: ProcessedImage[] = [];
+  
+  for (let y = 0; y < tilesY; y++) {
+    for (let x = 0; x < tilesX; x++) {
+      const { canvas, ctx } = createCanvas(tileSize, tileSize);
+      
+      // Calculate source position with spacing
+      const sourceX = x * (tileSize + spacing);
+      const sourceY = y * (tileSize + spacing);
+      
+      ctx.drawImage(
+        img,
+        sourceX,
+        sourceY,
+        tileSize,
+        tileSize,
+        0,
+        0,
+        tileSize,
+        tileSize
+      );
+      
+      const processedImage: ProcessedImage = {
+        id: generateId(),
+        originalUrl: imageUrl,
+        processedUrl: canvas.toDataURL('image/png'),
+        width: tileSize,
+        height: tileSize,
+        tileSize: tileSize
+      };
+      
+      processedImages.push(processedImage);
+    }
+  }
+  
+  return processedImages;
 };

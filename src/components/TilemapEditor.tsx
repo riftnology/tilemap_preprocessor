@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Tile, TileMap } from '../types';
-import { createEmptyTilemap, loadTilemapFromImage } from '../utils/imageUtils';
+import { Tile, TileMap, ProcessedImage } from '../types';
+import { createEmptyTilemap, loadTilemapFromImage, extractTilesFromTilemap } from '../utils/imageUtils';
 import { Save, Trash2, Grid, Upload } from 'lucide-react';
 
 interface TilemapEditorProps {
   selectedTile: Tile | null;
   onTilemapChange: (tilemap: TileMap) => void;
   tilemap: TileMap | null;
+  onTilesExtracted?: (tiles: ProcessedImage[]) => void;
 }
 
 const TilemapEditor: React.FC<TilemapEditorProps> = ({
   selectedTile,
   onTilemapChange,
-  tilemap
+  tilemap,
+  onTilesExtracted
 }) => {
   const [mapWidth, setMapWidth] = useState(32);
   const [mapHeight, setMapHeight] = useState(32);
@@ -112,6 +114,12 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
         };
         
         onTilemapChange(updatedTilemap);
+
+        // Extract tiles and add them to the palette
+        if (onTilesExtracted) {
+          const extractedTiles = await extractTilesFromTilemap(dataUrl, tileSize, tileSpacing);
+          onTilesExtracted(extractedTiles);
+        }
       } catch (error) {
         console.error('Error loading tilemap:', error);
       } finally {
@@ -214,12 +222,10 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
           <div 
             className={`inline-block ${showGrid ? 'bg-grid-pattern' : ''}`}
             style={{
-              backgroundSize: `${tileSize + tileSpacing}px ${tileSize + tileSpacing}px`,
-              backgroundImage: showGrid ? 
-                `linear-gradient(to right, #ccc 1px, transparent 1px), linear-gradient(to bottom, #ccc 1px, transparent 1px)` : 
-                'none',
-              width: `${mapWidth * (tileSize + tileSpacing) - tileSpacing}px`,
-              height: `${mapHeight * (tileSize + tileSpacing) - tileSpacing}px`
+              backgroundSize: `${tileSize}px ${tileSize}px`,
+              backgroundImage: showGrid ? 'linear-gradient(to right, #ccc 1px, transparent 1px), linear-gradient(to bottom, #ccc 1px, transparent 1px)' : 'none',
+              width: `${mapWidth * tileSize}px`,
+              height: `${mapHeight * tileSize}px`
             }}
           >
             {tiles.map((row, rowIndex) => (
@@ -228,12 +234,7 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
                   <div
                     key={`${rowIndex}-${colIndex}`}
                     className="relative"
-                    style={{ 
-                      width: tileSize, 
-                      height: tileSize,
-                      marginRight: colIndex < row.length - 1 ? `${tileSpacing}px` : '0',
-                      marginBottom: rowIndex < tiles.length - 1 ? `${tileSpacing}px` : '0'
-                    }}
+                    style={{ width: tileSize, height: tileSize }}
                     onClick={() => handleTileClick(rowIndex, colIndex)}
                     onContextMenu={(e) => {
                       e.preventDefault();
@@ -272,9 +273,6 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
       
       <div className="mt-4 text-sm text-gray-600">
         <p>Left-click to place selected tile. Right-click to remove tile.</p>
-        <p className="text-xs text-gray-500 mt-1">
-          Imported tilemaps use 2px spacing between tiles (traditional tilemap format)
-        </p>
       </div>
     </div>
   );

@@ -19,10 +19,10 @@ function App() {
   };
 
   const handleProcessingComplete = (images: ProcessedImage[]) => {
-    setProcessedImages(images);
+    setProcessedImages(prev => [...prev, ...images]);
     setActiveStep('edit');
     if (images.length > 0) {
-      // Auto-select the first processed image as the current tile
+      // Auto-select the first newly processed image as the current tile
       setSelectedTile({
         id: images[0].id,
         imageUrl: images[0].processedUrl,
@@ -32,12 +32,21 @@ function App() {
     }
   };
 
+  const handleClearPalette = () => {
+    setProcessedImages([]);
+    setSelectedTile(null);
+  };
+
   const handleSelectTile = (tile: Tile) => {
     setSelectedTile(tile);
   };
 
   const handleTilemapChange = (newTilemap: TileMap) => {
     setTilemap(newTilemap);
+  };
+
+  const handleTilesExtracted = (extractedTiles: ProcessedImage[]) => {
+    setProcessedImages(prev => [...prev, ...extractedTiles]);
   };
 
   return (
@@ -103,6 +112,7 @@ function App() {
                 processedImages={processedImages}
                 selectedTileId={selectedTile?.id || null}
                 onSelectTile={handleSelectTile}
+                onClearPalette={handleClearPalette}
               />
               
               <div className="bg-white rounded-lg shadow-md p-4 mt-4">
@@ -134,6 +144,7 @@ function App() {
                   <li>• Right-click to remove a tile</li>
                   <li>• Toggle grid visibility with the Grid button</li>
                   <li>• Export your tilemap as a PNG image</li>
+                  <li>• Import existing tilemaps to add all tiles to your palette</li>
                 </ul>
               </div>
             </div>
@@ -143,6 +154,7 @@ function App() {
                 selectedTile={selectedTile}
                 onTilemapChange={handleTilemapChange}
                 tilemap={tilemap}
+                onTilesExtracted={handleTilesExtracted}
               />
             </div>
           </div>
@@ -181,9 +193,9 @@ const StepButton: React.FC<StepButtonProps> = ({
         ? 'bg-blue-500 text-white'
         : completed
           ? 'bg-green-100 text-green-800 border border-green-300'
-          : disabled
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+        : disabled
+          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
     }`}
     onClick={onClick}
     disabled={disabled}
