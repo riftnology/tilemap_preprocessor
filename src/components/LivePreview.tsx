@@ -21,6 +21,8 @@ interface LivePreviewProps {
     globalCompositeOperation: string;
   }>;
   konvaImage: HTMLImageElement | null;
+  isDrawing: boolean;
+  forceUpdate?: number;
 }
 
 const LivePreview: React.FC<LivePreviewProps> = ({
@@ -29,7 +31,9 @@ const LivePreview: React.FC<LivePreviewProps> = ({
   options,
   lines,
   rectangles,
-  konvaImage
+  konvaImage,
+  isDrawing,
+  forceUpdate = 0
 }) => {
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -54,6 +58,9 @@ const LivePreview: React.FC<LivePreviewProps> = ({
     
     const img = new window.Image();
     img.onload = () => {
+      // Clear the canvas
+      previewCtx.clearRect(0, 0, 500, 500);
+      
       previewCtx.save();
       previewCtx.translate(250, 250); // Center of 500x500 canvas
       
@@ -65,11 +72,15 @@ const LivePreview: React.FC<LivePreviewProps> = ({
       }
       
       previewCtx.translate(-250, -250);
+      
+      // Scale the image to show how it will look at the output size
+      // Keep it proportional to the 500x500 preview canvas
       previewCtx.drawImage(img, 0, 0, 500, 500);
       
       // Draw grid lines if split into tiles is enabled
       if (options.splitIntoTiles) {
         const tileSize = options.tileSize;
+        // Calculate how the tiles will appear in the preview
         const scaledTileSize = (tileSize / options.outputSize) * 500;
         
         previewCtx.strokeStyle = '#00ff00'; // Bright green
@@ -97,12 +108,12 @@ const LivePreview: React.FC<LivePreviewProps> = ({
     img.src = dataURL;
   };
 
-  // Update preview when dependencies change
+  // Update preview when dependencies change, but not while drawing
   useEffect(() => {
-    if (konvaImage) {
+    if (konvaImage && !isDrawing) {
       updatePreview();
     }
-  }, [options, cropRect, lines, rectangles, konvaImage]);
+  }, [options, cropRect, lines, rectangles, konvaImage, isDrawing, forceUpdate]);
 
   return (
     <div>
@@ -123,7 +134,12 @@ const LivePreview: React.FC<LivePreviewProps> = ({
       <div className="text-xs text-gray-500 mt-1 text-center">
         Output: {options.outputSize}×{options.outputSize}px
         {options.splitIntoTiles && (
-          <span className="block">Grid: {options.tileSize}×{options.tileSize}px tiles</span>
+          <>
+            <span className="block">Grid: {options.tileSize}×{options.tileSize}px tiles</span>
+            <span className="block">
+              {Math.floor(options.outputSize / options.tileSize)}×{Math.floor(options.outputSize / options.tileSize)} = {Math.floor(options.outputSize / options.tileSize) ** 2} tiles
+            </span>
+          </>
         )}
       </div>
     </div>

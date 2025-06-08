@@ -55,6 +55,7 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
   }>>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [lastPaintPos, setLastPaintPos] = useState<{x: number, y: number} | null>(null);
+  const [previewUpdateTrigger, setPreviewUpdateTrigger] = useState(0);
   const [gridLines, setGridLines] = useState<Array<{
     points: number[];
     stroke: string;
@@ -261,6 +262,8 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
   const handleStageMouseUp = () => {
     setIsDrawing(false);
     setLastPaintPos(null);
+    // Trigger preview update when painting stops
+    setPreviewUpdateTrigger(prev => prev + 1);
   };
 
   const handleProcess = async () => {
@@ -277,41 +280,86 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
         pixelRatio: 1
       });
       
-      // Convert to blob and create file
+      const img = await new Promise<HTMLImageElement>((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.src = dataURL;
+      });
+      
+      // Create main processing canvas with output size
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
-      const img = new window.Image();
+      canvas.width = options.outputSize;
+      canvas.height = options.outputSize;
       
-      img.onload = async () => {
-        canvas.width = options.outputSize;
-        canvas.height = options.outputSize;
+      ctx.save();
+      ctx.translate(options.outputSize / 2, options.outputSize / 2);
+      
+      if (options.rotation) {
+        ctx.rotate((options.rotation * Math.PI) / 180);
+      }
+      if (options.flipX || options.flipY) {
+        ctx.scale(options.flipX ? -1 : 1, options.flipY ? -1 : 1);
+      }
+      
+      ctx.translate(-options.outputSize / 2, -options.outputSize / 2);
+      
+      // Scale the cropped image to fit the output size
+      ctx.drawImage(img, 0, 0, options.outputSize, options.outputSize);
+      ctx.restore();
+      
+      const processedImages: ProcessedImage[] = [];
+      
+      if (options.splitIntoTiles) {
+        // Calculate how many tiles fit in the output size
+        const tilesCount = Math.floor(options.outputSize / options.tileSize);
         
-        ctx.save();
-        ctx.translate(options.outputSize / 2, options.outputSize / 2);
-        
-        if (options.rotation) {
-          ctx.rotate((options.rotation * Math.PI) / 180);
-        }
-        if (options.flipX || options.flipY) {
-          ctx.scale(options.flipX ? -1 : 1, options.flipY ? -1 : 1);
-        }
-        
-        ctx.translate(-options.outputSize / 2, -options.outputSize / 2);
-        ctx.drawImage(img, 0, 0, options.outputSize, options.outputSize);
-        ctx.restore();
-        
-        canvas.toBlob(async (blob) => {
-          if (blob) {
-            const file = new File([blob], 'processed.png', { type: 'image/png' });
-            const processedImages = await processImage(file, options);
-            onProcessingComplete(processedImages);
-            // Clear the painted elements after processing
-            setLines([]);
-            setRectangles([]);
+        for (let y = 0; y < tilesCount; y++) {
+          for (let x = 0; x < tilesCount; x++) {
+            // Extract each tile
+            const tileCanvas = document.createElement('canvas');
+            const tileCtx = tileCanvas.getContext('2d')!;
+            tileCanvas.width = options.tileSize;
+            tileCanvas.height = options.tileSize;
+            
+            tileCtx.drawImage(
+              canvas,
+              x * options.tileSize,
+              y * options.tileSize,
+              options.tileSize,
+              options.tileSize,
+              0,
+              0,
+              options.tileSize,
+              options.tileSize
+            );
+            
+            processedImages.push({
+              id: Math.random().toString(36).substring(2, 15),
+              originalUrl: dataURL,
+              processedUrl: tileCanvas.toDataURL(),
+              width: options.tileSize,
+              height: options.tileSize,
+              tileSize: options.tileSize
+            });
           }
+        }
+      } else {
+        // Single image output
+        processedImages.push({
+          id: Math.random().toString(36).substring(2, 15),
+          originalUrl: dataURL,
+          processedUrl: canvas.toDataURL(),
+          width: options.outputSize,
+          height: options.outputSize,
+          tileSize: options.outputSize
         });
-      };
-      img.src = dataURL;
+      }
+      
+      onProcessingComplete(processedImages);
+      // Clear the painted elements after processing
+      setLines([]);
+      setRectangles([]);
       
     } catch (error) {
       console.error('Error processing image:', error);
@@ -722,6 +770,8 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
               lines={lines}
               rectangles={rectangles}
               konvaImage={konvaImage}
+              isDrawing={isDrawing}
+              forceUpdate={previewUpdateTrigger}
             />
 
             {/* Clear button for painted elements */}
