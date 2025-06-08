@@ -126,7 +126,7 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
             ...prev,
             cropStart: { x: x - imgX, y: y - imgY },
             cropSize: size,
-            outputSize: size
+            outputSize: 32
           }));
         };
         scaledImg.src = canvas.toDataURL();
@@ -204,8 +204,7 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
     setOptions(prev => ({
       ...prev,
       cropStart: { x: newRect.x - imagePosition.x, y: newRect.y - imagePosition.y },
-      cropSize: size,
-      outputSize: size
+      cropSize: size
     }));
   };
 
@@ -417,8 +416,7 @@ const ImageProcessor: React.FC<ImageProcessorProps> = ({
     setOptions(prev => ({
       ...prev,
       cropStart: { x: 0, y: 0 },
-      cropSize: Math.min(konvaImage.width, konvaImage.height),
-      outputSize: Math.min(konvaImage.width, konvaImage.height)
+      cropSize: Math.min(konvaImage.width, konvaImage.height)
     }));
   };
 
