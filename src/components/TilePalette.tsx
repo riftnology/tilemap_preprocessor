@@ -26,14 +26,14 @@ const TilePalette: React.FC<TilePaletteProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-3">
-      <h2 className="text-base font-medium mb-2 text-gray-700">Tile Palette</h2>
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <h2 className="text-lg font-medium mb-3 text-gray-700">Tile Palette</h2>
       
-      <div className="grid grid-cols-4 gap-1 max-h-[300px] overflow-y-auto p-2 border rounded bg-gray-50">
+      <div className="grid grid-cols-4 gap-2 max-h-[400px] overflow-y-auto p-4 border rounded bg-gray-50">
         {processedImages.map((image) => (
           <div
             key={image.id}
-            className={`relative w-full aspect-square flex items-center justify-center p-1 border-2 rounded cursor-pointer hover:border-blue-400 transition-colors ${
+            className={`relative w-full aspect-square flex items-center justify-center p-2 border-2 rounded cursor-pointer hover:border-blue-400 transition-colors ${
               selectedTileId === image.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
             }`}
             onClick={() => handleTileSelect(image)}
@@ -55,7 +55,7 @@ const TilePalette: React.FC<TilePaletteProps> = ({
       </div>
       
       {processedImages.length > 0 && (
-        <div className="mt-2 text-xs text-gray-500 text-center">
+        <div className="mt-3 text-sm text-gray-500 text-center">
           {processedImages.length} tile{processedImages.length !== 1 ? 's' : ''} available
         </div>
       )}

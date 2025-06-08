@@ -151,21 +151,28 @@ export const createEmptyTilemap = (
 
 export const loadTilemapFromImage = async (
   imageUrl: string,
-  tileSize: number
+  tileSize: number,
+  spacing: number = 2
 ): Promise<(Tile | null)[][]> => {
   const img = await loadImage(imageUrl);
-  const tilesX = Math.floor(img.width / tileSize);
-  const tilesY = Math.floor(img.height / tileSize);
+  // Calculate tiles considering spacing: each tile takes tileSize + spacing, except the last row/column
+  const tilesX = Math.floor((img.width + spacing) / (tileSize + spacing));
+  const tilesY = Math.floor((img.height + spacing) / (tileSize + spacing));
   const tiles: (Tile | null)[][] = [];
   
   for (let y = 0; y < tilesY; y++) {
     tiles[y] = [];
     for (let x = 0; x < tilesX; x++) {
       const { canvas, ctx } = createCanvas(tileSize, tileSize);
+      
+      // Calculate source position with spacing
+      const sourceX = x * (tileSize + spacing);
+      const sourceY = y * (tileSize + spacing);
+      
       ctx.drawImage(
         img,
-        x * tileSize,
-        y * tileSize,
+        sourceX,
+        sourceY,
         tileSize,
         tileSize,
         0,

@@ -17,6 +17,7 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
   const [mapWidth, setMapWidth] = useState(32);
   const [mapHeight, setMapHeight] = useState(32);
   const [tileSize] = useState(32);
+  const [tileSpacing] = useState(2);
   const [mapName, setMapName] = useState('New Tilemap');
   const [tiles, setTiles] = useState<(Tile | null)[][]>([]);
   const [showGrid, setShowGrid] = useState(true);
@@ -96,7 +97,7 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
           reader.readAsDataURL(file);
         });
         
-        const newTiles = await loadTilemapFromImage(dataUrl, tileSize);
+        const newTiles = await loadTilemapFromImage(dataUrl, tileSize, tileSpacing);
         setTiles(newTiles);
         setMapWidth(newTiles[0].length);
         setMapHeight(newTiles.length);
@@ -123,8 +124,9 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
     if (!canvasRef.current) return;
     
     const canvas = canvasRef.current;
-    canvas.width = mapWidth * tileSize;
-    canvas.height = mapHeight * tileSize;
+    // Calculate canvas size with spacing
+    canvas.width = mapWidth * tileSize + (mapWidth - 1) * tileSpacing;
+    canvas.height = mapHeight * tileSize + (mapHeight - 1) * tileSpacing;
     const ctx = canvas.getContext('2d')!;
     
     try {
@@ -137,7 +139,12 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
               image.onload = () => resolve(image);
               image.src = tile.imageUrl;
             });
-            ctx.drawImage(img, x * tileSize, y * tileSize, tileSize, tileSize);
+            
+            // Calculate position with spacing
+            const posX = x * (tileSize + tileSpacing);
+            const posY = y * (tileSize + tileSpacing);
+            
+            ctx.drawImage(img, posX, posY, tileSize, tileSize);
           }
         }
       }
@@ -152,9 +159,9 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-3">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
-        <div className="mb-3 md:mb-0">
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+        <div className="mb-4 md:mb-0">
           <label htmlFor="mapName" className="block text-sm font-medium text-gray-700 mb-1">
             Tilemap Name
           </label>
@@ -163,29 +170,29 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
             id="mapName"
             value={mapName}
             onChange={(e) => setMapName(e.target.value)}
-            className="px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
+            className="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
         
-        <div className="flex space-x-1">
+        <div className="flex space-x-2">
           <button 
-            className="flex items-center px-2 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm"
+            className="flex items-center px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
             onClick={handleExport}
           >
-            <Save className="w-3 h-3 mr-1" />
+            <Save className="w-4 h-4 mr-1" />
             Export
           </button>
           
           <button 
-            className="flex items-center px-2 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors text-sm"
+            className="flex items-center px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
             onClick={() => setShowGrid(!showGrid)}
           >
-            <Grid className="w-3 h-3 mr-1" />
+            <Grid className="w-4 h-4 mr-1" />
             {showGrid ? 'Hide Grid' : 'Show Grid'}
           </button>
           
-          <label className="flex items-center px-2 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors cursor-pointer text-sm">
-            <Upload className="w-3 h-3 mr-1" />
+          <label className="flex items-center px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors cursor-pointer">
+            <Upload className="w-4 h-4 mr-1" />
             Import
             <input 
               type="file" 
@@ -198,7 +205,7 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
         </div>
       </div>
       
-      <div className="overflow-auto border rounded-lg bg-gray-100 p-1" style={{ maxHeight: '65vh', maxWidth: '950px' }}>
+      <div className="overflow-auto border rounded-lg bg-gray-100 p-2" style={{ maxHeight: '70vh', maxWidth: '1080px' }}>
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
             <div className="text-gray-500">Loading tilemap...</div>
@@ -207,10 +214,12 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
           <div 
             className={`inline-block ${showGrid ? 'bg-grid-pattern' : ''}`}
             style={{
-              backgroundSize: `${tileSize}px ${tileSize}px`,
-              backgroundImage: showGrid ? 'linear-gradient(to right, #ccc 1px, transparent 1px), linear-gradient(to bottom, #ccc 1px, transparent 1px)' : 'none',
-              width: `${mapWidth * tileSize}px`,
-              height: `${mapHeight * tileSize}px`
+              backgroundSize: `${tileSize + tileSpacing}px ${tileSize + tileSpacing}px`,
+              backgroundImage: showGrid ? 
+                `linear-gradient(to right, #ccc 1px, transparent 1px), linear-gradient(to bottom, #ccc 1px, transparent 1px)` : 
+                'none',
+              width: `${mapWidth * (tileSize + tileSpacing) - tileSpacing}px`,
+              height: `${mapHeight * (tileSize + tileSpacing) - tileSpacing}px`
             }}
           >
             {tiles.map((row, rowIndex) => (
@@ -219,7 +228,12 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
                   <div
                     key={`${rowIndex}-${colIndex}`}
                     className="relative"
-                    style={{ width: tileSize, height: tileSize }}
+                    style={{ 
+                      width: tileSize, 
+                      height: tileSize,
+                      marginRight: colIndex < row.length - 1 ? `${tileSpacing}px` : '0',
+                      marginBottom: rowIndex < tiles.length - 1 ? `${tileSpacing}px` : '0'
+                    }}
                     onClick={() => handleTileClick(rowIndex, colIndex)}
                     onContextMenu={(e) => {
                       e.preventDefault();
@@ -256,8 +270,11 @@ const TilemapEditor: React.FC<TilemapEditorProps> = ({
       
       <canvas ref={canvasRef} className="hidden" />
       
-      <div className="mt-3 text-xs text-gray-600">
+      <div className="mt-4 text-sm text-gray-600">
         <p>Left-click to place selected tile. Right-click to remove tile.</p>
+        <p className="text-xs text-gray-500 mt-1">
+          Imported tilemaps use 2px spacing between tiles (traditional tilemap format)
+        </p>
       </div>
     </div>
   );
